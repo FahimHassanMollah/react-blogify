@@ -148,7 +148,7 @@ const Blog = () => {
                     <button onClick={()=> comment?.current?.scrollIntoView({behavior: 'smooth'})}>
                         <li>
                             <img src={commentIcon} alt="Comments" />
-                            <span>3</span>
+                            <span>{blog?.comments?.length ?? "0"}</span>
                         </li>
                     </button>
                 </ul>
