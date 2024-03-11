@@ -1,15 +1,22 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useBlog } from "../../hooks/useBlog";
 import { actions } from "../../actions";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import likeIcon from "../../assets/icons/like.svg";
+import likeFilledIcon from "../../assets/icons/like-filled.svg";
 import heartIcon from "../../assets/icons/heart.svg";
 import commentIcon from "../../assets/icons/comment.svg";
+import useAxios from "../../hooks/useAxios";
+import { useAuth } from "../../hooks/useAuth";
 
 const Blog = () => {
+    const {api} = useAxios();
     const comment = useRef();
     const { state, dispatch } = useBlog();
+    const {auth} = useAuth();
+    const [liked, setLiked] = useState(false);
+    console.log(liked, "likedlikedlikedlikedlikedliked");
+    const isLoggedIn = auth?.user?.id ? true : false;
     const blog = state?.blogDetail ?? [];
     const totalLikes = blog?.likes?.length ?? 0;
     const authorName = (blog?.author?.firstName ?? '') + " " + (blog?.author?.lastName ?? '');
@@ -30,34 +37,60 @@ const Blog = () => {
         return formattedDate;
         
     }
-    console.log(blog);
     let { blogId } = useParams();
-
+    const fetchBlog = async () => {
+        try {
+         dispatch({
+             type: actions.blogDetail.DATA_FETCHING,
+         });
+         const response = await api.get(
+             `${import.meta.env.VITE_SERVER_BASE_URL}/blogs/${blogId}/`
+         );
+         console.log(response?.data);
+         if (response.status === 200) {
+             dispatch({
+                 type: actions.blogDetail.DATA_FETCHED,
+                 data: response?.data ?? {},
+             });
+             if (isLoggedIn) {
+                    const isLiked = response?.data?.likes?.findIndex((like) => like?.author === auth?.user?.id);
+                    if (isLiked !== -1) {
+                        setLiked(true);
+                    }
+             }
+         }
+        } catch (error) {
+            console.log(error?.response?.data);
+             dispatch({
+                  type: actions.blogDetail.DATA_FETCH_ERROR,
+                  error: error?.message ?? 'Something went wrong',
+             });
+        }
+     };
     useEffect(() => {
-
-        const fetchPopularBlogs = async () => {
-           try {
-            dispatch({
-                type: actions.blogDetail.DATA_FETCHING,
-            });
-            const response = await axios.get(
-                `${import.meta.env.VITE_SERVER_BASE_URL}/blogs/${blogId}/`
-            );
-            if (response.status === 200) {
-                dispatch({
-                    type: actions.blogDetail.DATA_FETCHED,
-                    data: response?.data ?? {},
-                });
-            }
-           } catch (error) {
-                dispatch({
-                     type: actions.blogDetail.DATA_FETCH_ERROR,
-                     error: error?.message ?? 'Something went wrong',
-                });
-           }
-        };
-        fetchPopularBlogs();
+        fetchBlog();
     }, []);
+
+    const handleLike = async () => {
+        if (!isLoggedIn) {
+            alert("You need to login to like this blog");
+            return;
+        }
+        try {
+            const response = await api.post(
+                `${import.meta.env.VITE_SERVER_BASE_URL}/blogs/${blogId}/like`
+            );
+
+            if (response.status === 200) {
+                console.log(response?.data);
+                fetchBlog();
+            }
+        } catch (error) {
+            console.error(error);
+            // setLiked(false);
+        }
+    };
+    
     return (
         <div>
             <main>
@@ -137,9 +170,10 @@ const Blog = () => {
 
             <div className="floating-action">
                 <ul className="floating-action-menus">
-                    <li>
-                        <img src={likeIcon} alt="like" />
-                        <span>10</span>
+                    <li  onClick={()=> handleLike()}>
+                        <img src={liked ? likeFilledIcon : likeIcon} alt="like" />
+                        {/* <img src={likeFilledIcon} alt="" /> */}
+                        <span>{totalLikes}</span>
                     </li>
 
                     <li>
