@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { actions } from "../actions";
 import { useAuth } from "../hooks/useAuth";
 import { useProfile } from "../hooks/useProfile";

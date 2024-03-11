@@ -8,6 +8,7 @@ const initialState = {
         total: 10
     },
     popularBlogs: [],
+    favouriteBlogs: [],
     blogDetail: {},
     loading: false,
     error: null,
@@ -66,6 +67,12 @@ const blogReducer = (state, action) => {
             return {
                 ...state,
                 popularBlogs: action.data,
+            };
+        }
+        case actions.favouriteBlog.DATA_FETCHED: {
+            return {
+                ...state,
+                favouriteBlogs: action.data,
             };
         }
         case actions.blogDetail.DATA_FETCHING: {
