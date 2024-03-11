@@ -1,8 +1,13 @@
 import { actions } from "../actions";
 
 const initialState = {
-    user: null,
-    posts: [],
+    avatar: "",
+    bio: "",
+    blogs: [],
+    email: "",
+    favourites: [],
+    firstName: "",
+    lastName: "",
     loading: false,
     error: null,
 };
@@ -20,8 +25,9 @@ const profileReducer = (state, action) => {
             return {
                 ...state,
                 loading: false,
-                user: action.data.user,
-                posts: action.data.posts,
+                error: null,
+                ...action.data,
+               
             };
         }
 
@@ -37,7 +43,16 @@ const profileReducer = (state, action) => {
             return {
                 ...state,
                 loading: false,
-                user: action.data,
+                error: null,
+                ...action.data,
+            };
+        }
+
+        case actions.profile.DATA_UPDATE_ERROR: {
+            return {
+                ...state,
+                loading: false,
+                error: action.error,
             };
         }
 
@@ -45,10 +60,8 @@ const profileReducer = (state, action) => {
             return {
                 ...state,
                 loading: false,
-                user: {
-                    ...state.user,
-                    avatar: action.data.avatar,
-                },
+                error: null,
+                avatar: action.data.avatar,
             };
         }
 

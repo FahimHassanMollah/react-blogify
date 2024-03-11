@@ -56,10 +56,17 @@ const Header = () => {
                         </li>
                         {
                             isLoggedIn && <li onClick={()=> navigate("/profile")} className="flex items-center cursor-pointer">
-
-                                <div className="avater-img bg-orange-600 text-white">
+                                {
+                                    auth?.user?.avatar ?  <img
+                                    className="w-10 h-10 object-cover rounded-full"
+                                        src={`${import.meta.env.VITE_SERVER_BASE_URL}/uploads/avatar/${auth?.user?.avatar
+                                            }`}
+                                        alt=""
+                                    /> : <div className="avater-img bg-orange-600 text-white">
                                     <span className="">{getFirstLetter(auth?.user?.firstName)}</span>
                                 </div>
+                                }
+                                
                                 <span className="text-white ml-2">
                                     {auth?.user?.firstName} {auth?.user?.lastName}
                                 </span>
