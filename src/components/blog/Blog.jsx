@@ -31,7 +31,7 @@ const Blog = () => {
         return formattedDate;
 
     }
-    let { blogId } = useParams();
+    const { blogId } = useParams();
     const fetchBlog = async () => {
         try {
             dispatch({

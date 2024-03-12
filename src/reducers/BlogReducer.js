@@ -58,6 +58,16 @@ const blogReducer = (state, action) => {
                 blogs: [...state.blogs, action.data],
             };
         }
+        case actions.blog.COMMENT_CREATED: {
+            return {
+                ...state,
+                loading: false,
+                blogDetail: {
+                    ...state.blogDetail,
+                    comments: [...state.blogDetail.comments, action.data],
+                },
+            };
+        }
 
         case actions.blog.POST_DELETED: {
             return {

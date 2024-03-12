@@ -1,13 +1,38 @@
 import { useBlog } from '../../hooks/useBlog';
 import { getFirstLetter } from '../../utils';
 import { useAuth } from '../../hooks/useAuth';
+import { useState } from 'react';
+import useAxios from '../../hooks/useAxios';
+import { useParams } from 'react-router-dom';
+import { actions } from '../../actions';
 
 const Comment = () => {
+    const { blogId } = useParams();
     const { auth } = useAuth();
+    const {api} = useAxios();
     const { state, dispatch } = useBlog();
+    const [comment, setComment] = useState("");
     const getFullName = (firstName, lastName) => {
         return (firstName ?? '') + " " + (lastName ?? '');
     }
+
+    const handleAddComment = async() => {
+        try {
+            const response = await api.post(
+                `${import.meta.env.VITE_SERVER_BASE_URL}/blogs/${blogId}/comment`,{content:comment}
+            );
+            if (response.status === 200) {
+                dispatch({
+                    type: actions.blogDetail.DATA_FETCHED,
+                    data: response?.data ?? {},
+                });
+                setComment("");
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    
 
     return (
         <div className="mx-auto w-full md:w-10/12 container">
@@ -18,11 +43,13 @@ const Comment = () => {
                 </div>
                 <div className="w-full">
                     <textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
                         className="w-full bg-[#030317] border border-slate-500 text-slate-300 p-4 rounded-md focus:outline-none"
                         placeholder="Write a comment"
                     ></textarea>
                     <div className="flex justify-end mt-4">
-                        <button disabled={!auth?.user?.id} className="disabled:bg-indigo-300 bg-indigo-600 text-white px-6 py-2 md:py-3 rounded-md hover:bg-indigo-700 transition-all duration-200">
+                        <button onClick={handleAddComment} disabled={!auth?.user?.id} className="disabled:bg-indigo-300 bg-indigo-600 text-white px-6 py-2 md:py-3 rounded-md hover:bg-indigo-700 transition-all duration-200">
                             Comment
                         </button>
                     </div>
