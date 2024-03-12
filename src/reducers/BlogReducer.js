@@ -30,6 +30,18 @@ const blogReducer = (state, action) => {
                 loading: false,
             };
         }
+        case actions.blog.DATA_RESET_BLOG_BLOG_LIST: {
+            return {
+                ...state,
+                blogs: {
+                    blogs: [],
+                    limit: 10,
+                    page: 1,
+                    total: 10
+                },
+                loading: false,
+            };
+        }
 
         case actions.blog.DATA_FETCH_ERROR: {
             return {

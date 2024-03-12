@@ -1,11 +1,26 @@
 
+import { useEffect } from "react";
 import BlogList from "../components/blog/BlogList";
 import FavouriteBlogList from "../components/blog/FavouriteBlogList";
 import PopularBlogList from "../components/blog/PopularBlogList";
 import { useAuth } from "../hooks/useAuth";
+import { useBlog } from "../hooks/useBlog";
+import { actions } from "../actions";
 
 const HomePage = () => {
+   const { dispatch } = useBlog();
    const {auth} = useAuth();
+   useEffect(() => {
+    return () => {
+        dispatch({
+            type: actions.blog.DATA_RESET_BLOG_BLOG_LIST,
+        });
+    }
+   }, [])
+
+   
+  
+   
     return (
         <main>
             <section>
