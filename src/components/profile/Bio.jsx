@@ -13,6 +13,7 @@ const Bio = () => {
     const { state, dispatch } = useProfile();
     const [bio, setBio] = useState("");
     const [editMode, setEditMode] = useState(false);
+    const isLoggedInUser = auth?.user?.id === state?.id;
 
 
     useEffect(() => {
@@ -24,13 +25,11 @@ const Bio = () => {
         const updateBio = async () => {
             let formdata = new FormData();
             formdata.append("bio", bio);
-            console.log(formdata);
             try {
                 const response = await api.patch(
                     `${import.meta.env.VITE_SERVER_BASE_URL}/profile/`,
                      formdata 
                 );
-                console.log(response);
                 if (response.status === 200) {
                     dispatch({
                         type: actions.profile.DATA_UPDATED,
@@ -69,9 +68,9 @@ const Bio = () => {
                         onClick={updateBio}
                     >
                         <img src={checkIcon} alt="Edit" />
-                    </button> : <button className="flex-center h-7 w-7 rounded-full">
+                    </button> : (isLoggedInUser &&<button className="flex-center h-7 w-7 rounded-full">
                         <img onClick={() => setEditMode(true)} src={editIcon} alt="Edit" />
-                    </button>
+                    </button> )
                 }
 
             </div>

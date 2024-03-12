@@ -11,6 +11,7 @@ const ProfileImage = () => {
     const { auth, setAuth } = useAuth();
     const { state, dispatch } = useProfile();
     const fileUploaderRef = useRef();
+    const isLoggedInUser = auth?.user?.id === state?.id;
 
     const handleImageUpload = (event) => {
         event.preventDefault();
@@ -29,7 +30,6 @@ const ProfileImage = () => {
                 `${import.meta.env.VITE_SERVER_BASE_URL}/profile/`,
                 formData
             );
-            console.log(response);
             if (response.status === 200) {
                 dispatch({
                     type: actions.profile.IMAGE_UPDATED,
@@ -64,12 +64,16 @@ const ProfileImage = () => {
                     )}
                 </div>
 
-                <button
+              {
+                isLoggedInUser && (
+                  <button
                     onClick={handleImageUpload}
-                    className="grid place-items-center absolute bottom-0 right-0 h-7 w-7 rounded-full bg-slate-700 hover:bg-slate-700/80"
-                >
-                    <img src={editIcon} alt="Edit" />
-                </button>
+                    className="absolute bottom-0 right-0 p-2 bg-gray-600 rounded-full"
+                  >
+                    <img src={editIcon} alt="edit" />
+                  </button>
+                )
+              }
                 <input id="file" type="file" ref={fileUploaderRef} hidden />
             </div>
         </>

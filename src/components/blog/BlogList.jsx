@@ -11,7 +11,6 @@ const BlogList = () => {
     const loaderRef = useRef(null);
     const { state, dispatch } = useBlog();
     const blogs = state.blogs?.blogs;
-    // console.log(state);
     const fetchBlogs = async () => {
         try {
             const response = await axios.get(
@@ -22,13 +21,10 @@ const BlogList = () => {
                     type: actions.blog.DATA_FETCHED,
                     data: response.data,
                 });
-                console.log(response.data.blogs);
                 if (response.data.blogs.length === 0) {
                     setHasMoreData(false);
                 }
-                // console.log('called',page);
                 setPage((prevPage) => {
-                    console.log('prevPage',prevPage);
                     return prevPage + 1;
                 
                 });

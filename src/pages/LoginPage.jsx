@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import axios from "axios";
 
@@ -19,12 +19,10 @@ const LoginPage = () => {
 
             if (response.status === 200) {
                 const { token, user } = response.data;
-                console.log(response, "response");
                 if (token) {
                     const authToken = token.accessToken;
                     const refreshToken = token.refreshToken;
 
-                    console.log(`Login time auth token: ${authToken}`);
                     setAuth({ user, authToken, refreshToken });
 
                     navigate("/");
@@ -88,7 +86,7 @@ const LoginPage = () => {
                         </button>
                     </div>
                     <p className="text-center">
-                        Don't have an account? <a href="./register.html" className="text-indigo-600 hover:underline">Register</a>
+                        Don't have an account? <Link to="/register" className="text-indigo-600 hover:underline">Register</Link>
                     </p>
                 </form>
             </div>

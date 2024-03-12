@@ -1,25 +1,24 @@
 import { useEffect } from "react";
 import { actions } from "../actions";
-import { useAuth } from "../hooks/useAuth";
 import { useProfile } from "../hooks/useProfile";
 import ProfileImage from "../components/profile/ProfileImage";
 import Bio from "../components/profile/Bio";
 import useAxios from "../hooks/useAxios";
 import BlogCard from "../components/blog/BlogCard";
+import { useParams } from "react-router-dom";
 
 const ProfilePage = () => {
+  const { profileId } = useParams();
   const { api } = useAxios();
   const { state, dispatch } = useProfile();
-  const { auth } = useAuth();
-  const authorName = (state?.firstName ?? '') + " " + (state?.lastName ?? '');
-
+  const authorName = (state?.firstName ?? "") + " " + (state?.lastName ?? "");
 
   useEffect(() => {
     dispatch({ type: actions.profile.DATA_FETCHING });
     const fetchProfile = async () => {
       try {
         const response = await api.get(
-          `${import.meta.env.VITE_SERVER_BASE_URL}/profile/${auth?.user?.id}`
+          `${import.meta.env.VITE_SERVER_BASE_URL}/profile/${profileId}`
         );
         if (response.status === 200) {
           dispatch({
@@ -53,17 +52,20 @@ const ProfilePage = () => {
             <Bio />
             <div className="w-3/4 border-b border-[#3F3F3F] py-6 lg:py-8"></div>
           </div>
-          {
-            state?.blogs?.length > 0 ? <>
+          {state?.blogs?.length > 0 ? (
+            <>
               <h4 className="mt-6 text-xl lg:mt-8 lg:text-2xl">Your Blogs</h4>
               <div className="my-6 space-y-4">
-               { state?.blogs?.map((singleBlog,index)=> <BlogCard key={index} blog={singleBlog}/>)}
+                {state?.blogs?.map((singleBlog, index) => (
+                  <BlogCard key={index} blog={singleBlog} />
+                ))}
               </div>
-
-
-            </> : <h4 className="mt-6 text-xl lg:mt-8 lg:text-2xl text-center text-red-400">No Blogs Found</h4>
-          }
-
+            </>
+          ) : (
+            <h4 className="mt-6 text-xl lg:mt-8 lg:text-2xl text-center text-red-400">
+              No Blogs Found
+            </h4>
+          )}
         </div>
       </main>
     </div>

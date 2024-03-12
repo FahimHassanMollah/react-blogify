@@ -22,5 +22,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       </BlogProvider>
     </AuthProvider>
 
-  // </React.StrictMode>,
+  //  </React.StrictMode>,
 )

@@ -17,6 +17,7 @@ const Blog = () => {
     const { auth } = useAuth();
     const [liked, setLiked] = useState(false);
     const [totalLikes, setTotalLikes] = useState(0);
+    const { blogId } = useParams();
     const isLoggedIn = auth?.user?.id ? true : false;
     const blog = state?.blogDetail ?? [];
     const authorName = (blog?.author?.firstName ?? '') + " " + (blog?.author?.lastName ?? '');
@@ -31,7 +32,6 @@ const Blog = () => {
         return formattedDate;
 
     }
-    const { blogId } = useParams();
     const fetchBlog = async () => {
         try {
             dispatch({
@@ -40,7 +40,6 @@ const Blog = () => {
             const response = await api.get(
                 `${import.meta.env.VITE_SERVER_BASE_URL}/blogs/${blogId}/`
             );
-            console.log(response?.data);
             if (response.status === 200) {
                 dispatch({
                     type: actions.blogDetail.DATA_FETCHED,
@@ -58,7 +57,6 @@ const Blog = () => {
                 }
             }
         } catch (error) {
-            console.log(error?.response?.data);
             dispatch({
                 type: actions.blogDetail.DATA_FETCH_ERROR,
                 error: error?.message ?? 'Something went wrong',

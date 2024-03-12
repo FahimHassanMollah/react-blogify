@@ -8,8 +8,6 @@ import { getFirstLetter } from '../../utils';
 const Header = () => {
     const { auth, setAuth } = useAuth();
     const navigate = useNavigate();
-
-    console.log(auth, "auth");
     const isLoggedIn = auth?.user?.id && auth?.authToken && auth?.refreshToken;
 
     const handleAuth = () => {

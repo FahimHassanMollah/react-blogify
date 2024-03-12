@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useBlog } from "../../hooks/useBlog";
 import { actions } from "../../actions";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const PopularBlogList = () => {
     const { state, dispatch } = useBlog();
@@ -32,14 +33,16 @@ const PopularBlogList = () => {
                     <ul className="space-y-5 my-5">
                         {blogs?.map((blog, index) => (
                             <li key={index}>
-                                <h3 className="text-slate-400 font-medium hover:text-slate-300 transition-all cursor-pointer">
-                                    {blog?.title}
-                                </h3>
+                                <Link to={`/blog/${blog?.id}`}>
+                                    <h3 className="text-slate-400 font-medium hover:text-slate-300 transition-all cursor-pointer">
+                                        {blog?.title}
+                                    </h3>
+                                </Link>
                                 <p className="text-slate-600 text-sm">
-                                    by
-                                    <a href="./profile.html">
+                                    by {" "}
+                                    <Link to={`/profile/${blog?.author?.id}`}>
                                         {blog?.author?.firstName} {blog?.author?.lastName}
-                                    </a>
+                                    </Link>
                                     <span>·</span> {blog?.likes?.length ?? "0"} Likes
                                 </p>
                             </li>
