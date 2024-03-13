@@ -55,12 +55,17 @@ const RegisterPage = () => {
                                 Last Name
                             </label>
                             <input
-                                {...register("lastName")}
+                                {...register("lastName", {
+                                    required: "Last Name is Required",
+                                })}
                                 type="text"
                                 id="lastName"
                                 name="lastName"
                                 className="w-full p-3 bg-[#030317] border border-white/20 rounded-md focus:outline-none focus:border-indigo-500"
                             />
+                             <div role="alert" className="text-red-600">
+                                {errors?.lastName?.message}
+                            </div>
                         </div>
                         <div className="mb-6">
                             <label htmlFor="email" className="block mb-2">

@@ -6,6 +6,7 @@ import Layout from './components/common/Layout';
 import Blog from './components/blog/Blog';
 import ProfilePage from './pages/ProfilePage';
 import RegisterPage from './pages/RegisterPage';
+import BlogCreatePage from './pages/BlogCreatePage';
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
       <Route element={<Layout />}>
         <Route element={<PrivateRoutes />}>
           <Route element={<ProfilePage />} path="/profile/:profileId" exact />
+          <Route element={<BlogCreatePage />} path="/blog/create" exact />
         </Route>
         {/* public routes  */}
         <Route element={<HomePage />} path="/" exact />

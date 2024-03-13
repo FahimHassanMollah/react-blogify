@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useBlog } from "../../hooks/useBlog";
 import { actions } from "../../actions";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import likeIcon from "../../assets/icons/like.svg";
 import likeFilledIcon from "../../assets/icons/like-filled.svg";
 import heartIcon from "../../assets/icons/heart.svg";
+import heartFilled from "../../assets/icons/heart-filled.svg";
 import commentIcon from "../../assets/icons/comment.svg";
 import useAxios from "../../hooks/useAxios";
 import { useAuth } from "../../hooks/useAuth";
@@ -16,6 +17,7 @@ const Blog = () => {
     const { state, dispatch } = useBlog();
     const { auth } = useAuth();
     const [liked, setLiked] = useState(false);
+    const [isFavourite, setIsFavourite] = useState(false);
     const [totalLikes, setTotalLikes] = useState(0);
     const { blogId } = useParams();
     const isLoggedIn = auth?.user?.id ? true : false;
@@ -54,6 +56,8 @@ const Blog = () => {
                     else {
                         setLiked(false);
                     }
+                    const isFavourite = response?.data?.isFavourite ?? false;
+                    setIsFavourite(isFavourite);
                 }
             }
         } catch (error) {
@@ -85,6 +89,23 @@ const Blog = () => {
             console.error(error);
         }
     };
+    const handleFavourite = async() => {
+        if (!isLoggedIn) {
+            alert("You need to login to add this blog to your favourite list");
+            return;
+        }
+        try {
+            const response = await api.patch(
+                `${import.meta.env.VITE_SERVER_BASE_URL}/blogs/${blogId}/favourite`
+            );
+            if (response.status === 200) {
+                setIsFavourite(response?.data?.isFavourite);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    
 
     return (
         <div>
@@ -95,12 +116,12 @@ const Blog = () => {
                             {blog?.title}
                         </h1>
                         <div className="flex justify-center items-center my-4 gap-4">
-                            <div className="flex items-center capitalize space-x-2">
+                            <Link to={`/profile/${blog?.author?.id}`}  className="flex items-center capitalize space-x-2">
                                 <div className="avater-img bg-indigo-600 text-white">
                                     <span className="">{firstLetterOfAuthor}</span>
                                 </div>
                                 <h5 className="text-slate-500 text-sm">{authorName}</h5>
-                            </div>
+                            </Link>
                             <span className="text-sm text-slate-700 dot">{formatDate(blog?.createdAt)}</span>
                             <span className="text-sm text-slate-700 dot">{totalLikes} Likes</span>
                         </div>
@@ -132,12 +153,11 @@ const Blog = () => {
                 <ul className="floating-action-menus">
                     <li onClick={() => handleLike()}>
                         <img src={liked ? likeFilledIcon : likeIcon} alt="like" />
-                        {/* <img src={likeFilledIcon} alt="" /> */}
                         <span>{totalLikes}</span>
                     </li>
 
-                    <li>
-                        <img src={heartIcon} alt="Favourite" />
+                    <li onClick={() => handleFavourite()}>
+                        <img src={isFavourite? heartFilled : heartIcon} alt="Favourite" />
                     </li>
                     <button onClick={() => comment?.current?.scrollIntoView({ behavior: 'smooth' })}>
                         <li>
