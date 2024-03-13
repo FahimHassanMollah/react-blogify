@@ -1,11 +1,38 @@
-
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import useAxios from "../hooks/useAxios";
 const BlogCreatePage = () => {
+    const { api } = useAxios();
+    const navigate = useNavigate();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        setError,
+    } = useForm();
+
+    const submitForm = async (formData) => {
+        try {
+            const response = await api.post(
+                `${import.meta.env.VITE_SERVER_BASE_URL}/blogs`,
+                formData
+            );
+
+            if (response.status === 201) {
+                navigate("/");
+            }
+        } catch (error) {
+            setError("root.random", {
+                type: "random",
+                message: `Something went wrong. Please try again later.`,
+            });
+        }
+    };
     return (
         <main>
             <section>
                 <div className="container">
-                  
-                    <form action="#" method="POST" className="createBlog">
+                    <form onSubmit={handleSubmit(submitForm)} className="createBlog">
                         <div className="grid place-items-center bg-slate-600/20 h-[150px] rounded-md my-4">
                             <div className="flex items-center gap-4 hover:scale-110 transition-all cursor-pointer">
                                 <svg
@@ -23,14 +50,27 @@ const BlogCreatePage = () => {
                                     />
                                 </svg>
                                 <p>Upload Your Image</p>
+                                <input type="file" name="thumbnail" hidden id="" />
                             </div>
                         </div>
                         <div className="mb-6">
-                            <input type="text" id="title" name="title" placeholder="Enter your blog title" />
+                            <input
+                                {...register("title", {
+                                    required: "Title  is Required",
+                                })}
+                                type="text"
+                                id="title"
+                                name="title"
+                                placeholder="Enter your blog title"
+                            />
                         </div>
 
                         <div className="mb-6">
                             <input
+
+                                {...register("tags", {
+                                    required: "Tags  is Required",
+                                })}
                                 type="text"
                                 id="tags"
                                 name="tags"
@@ -39,21 +79,29 @@ const BlogCreatePage = () => {
                         </div>
 
                         <div className="mb-6">
-                            <textarea id="content" name="content" placeholder="Write your blog content" rows="8"></textarea>
+                            <textarea
+                             {...register("content", {
+                                required: "Content  is Required",
+                            })}
+                                id="content"
+                                name="content"
+                                placeholder="Write your blog content"
+                                rows="8"
+                            ></textarea>
                         </div>
+                        <p>{errors?.root?.random?.message}</p>
 
-                        <a
-                            href="./createBlog.html"
+                        <button
+                            type="submit"
                             className="bg-indigo-600 text-white px-6 py-2 md:py-3 rounded-md hover:bg-indigo-700 transition-all duration-200"
                         >
                             Create Blog
-                        </a>
+                        </button>
                     </form>
                 </div>
             </section>
         </main>
+    );
+};
 
-    )
-}
-
-export default BlogCreatePage
+export default BlogCreatePage;
