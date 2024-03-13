@@ -1,7 +1,9 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import useAxios from "../hooks/useAxios";
+import { useRef } from "react";
 const BlogCreatePage = () => {
+    const fileUploaderRef = useRef();
     const { api } = useAxios();
     const navigate = useNavigate();
     const {
@@ -9,17 +11,35 @@ const BlogCreatePage = () => {
         handleSubmit,
         formState: { errors },
         setError,
+        clearErrors
     } = useForm();
-
+   
     const submitForm = async (formData) => {
+       
+        if (!fileUploaderRef.current?.files[0]) {
+            setError("root.thumbnail", {
+                type: "thumbnail",
+                message: `Thumbnail is Required`,
+            });
+          return;
+        }
         try {
+            const newFormData = new FormData();
+            newFormData.append("thumbnail", fileUploaderRef.current.files[0]);
+            newFormData.append("title", formData.title);
+            newFormData.append("tags", formData.tags);
+            newFormData.append("content", formData.content);
+
             const response = await api.post(
                 `${import.meta.env.VITE_SERVER_BASE_URL}/blogs`,
-                formData
+                newFormData
             );
 
             if (response.status === 201) {
-                navigate("/");
+                // making this delay because the local server is too slow
+               setTimeout(() => {
+                navigate(`/blog/${response.data?.blog?.id}`);
+               }, 1000);
             }
         } catch (error) {
             setError("root.random", {
@@ -28,13 +48,36 @@ const BlogCreatePage = () => {
             });
         }
     };
+
+    const handleFile = (event) => {
+        event.preventDefault();
+        fileUploaderRef.current.addEventListener("change", onFileChange);
+        fileUploaderRef.current.click();
+    };
+    const onFileChange = () => {
+      if (fileUploaderRef.current?.files[0]) {
+        clearErrors("root.thumbnail");
+      }
+    }
+    const onError = () => {
+        if (!fileUploaderRef.current?.files[0]) {
+            setError("root.thumbnail", {
+                type: "thumbnail",
+                message: `Thumbnail is Required`,
+            });
+          return;
+        }
+    }
+
+    
+
     return (
         <main>
             <section>
                 <div className="container">
-                    <form onSubmit={handleSubmit(submitForm)} className="createBlog">
+                    <form onSubmit={handleSubmit(submitForm,onError)} className="createBlog">
                         <div className="grid place-items-center bg-slate-600/20 h-[150px] rounded-md my-4">
-                            <div className="flex items-center gap-4 hover:scale-110 transition-all cursor-pointer">
+                            <div onClick={handleFile} className="flex items-center gap-4 hover:scale-110 transition-all cursor-pointer">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -50,8 +93,13 @@ const BlogCreatePage = () => {
                                     />
                                 </svg>
                                 <p>Upload Your Image</p>
-                                <input type="file" name="thumbnail" hidden id="" />
+
                             </div>
+                            <input 
+                                id="file" type="file" ref={fileUploaderRef} hidden  />
+
+                            <div role="alert" className='text-red-600'>{errors?.root?.thumbnail?.message}</div>
+
                         </div>
                         <div className="mb-6">
                             <input
@@ -63,6 +111,8 @@ const BlogCreatePage = () => {
                                 name="title"
                                 placeholder="Enter your blog title"
                             />
+                            <div role="alert" className='text-red-600'>{errors?.title?.message}</div>
+
                         </div>
 
                         <div className="mb-6">
@@ -76,19 +126,23 @@ const BlogCreatePage = () => {
                                 name="tags"
                                 placeholder="Your Comma Separated Tags Ex. JavaScript, React, Node, Express,"
                             />
+                            <div role="alert" className='text-red-600'>{errors?.tags?.message}</div>
+
                         </div>
 
                         <div className="mb-6">
                             <textarea
-                             {...register("content", {
-                                required: "Content  is Required",
-                            })}
+                                {...register("content", {
+                                    required: "Content  is Required",
+                                })}
                                 id="content"
                                 name="content"
                                 placeholder="Write your blog content"
                                 rows="8"
                             ></textarea>
                         </div>
+                        <div role="alert" className='text-red-600'>{errors?.content?.message}</div>
+
                         <p>{errors?.root?.random?.message}</p>
 
                         <button
@@ -98,6 +152,7 @@ const BlogCreatePage = () => {
                             Create Blog
                         </button>
                     </form>
+                   
                 </div>
             </section>
         </main>
