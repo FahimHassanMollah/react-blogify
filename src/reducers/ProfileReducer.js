@@ -64,6 +64,14 @@ const profileReducer = (state, action) => {
                 avatar: action.data.avatar,
             };
         }
+        case actions.profile.PROFILE_BLOG_DELETED: {
+            return {
+                ...state,
+                loading: false,
+                error: null,
+                blogs: state.blogs.filter((blog) => blog.id !== action.data),
+            };
+        }
 
         default: {
             return state;

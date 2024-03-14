@@ -7,6 +7,7 @@ import Blog from './components/blog/Blog';
 import ProfilePage from './pages/ProfilePage';
 import RegisterPage from './pages/RegisterPage';
 import BlogCreatePage from './pages/BlogCreatePage';
+import BlogEdit from './pages/BlogEdit';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route element={<PrivateRoutes />}>
           <Route element={<ProfilePage />} path="/profile/:profileId" exact />
           <Route element={<BlogCreatePage />} path="/blog/create" exact />
+          <Route element={<BlogEdit />} path="/blog/edit/:blogId" exact />
         </Route>
         {/* public routes  */}
         <Route element={<HomePage />} path="/" exact />

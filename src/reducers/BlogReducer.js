@@ -26,7 +26,7 @@ const blogReducer = (state, action) => {
         case actions.blog.DATA_FETCHED: {
             return {
                 ...state,
-                blogs: {...action.data,blogs: [...state.blogs.blogs,...action.data.blogs]},
+                blogs: {...action.data,blogs: [...(state?.blogs?.blogs ?? []),...action.data.blogs]},
                 loading: false,
             };
         }
@@ -69,11 +69,13 @@ const blogReducer = (state, action) => {
             };
         }
 
-        case actions.blog.POST_DELETED: {
+        case actions.blog.BLOG_DELETED: {
             return {
                 ...state,
                 loading: false,
-                blogs: state.blogs.filter((item) => item.id !== action.data),
+                blogs: {...state.blogs,blogs: state?.blogs?.blogs?.filter((item) => item.id !== action.data) ?? []},
+                favouriteBlogs: state?.favouriteBlogs?.filter((item) => item.id !== action.data) ?? [],
+                popularBlogs: state?.popularBlogs?.filter((item) => item.id !== action.data) ?? [],
             };
         }
 

@@ -14,7 +14,6 @@ const FavouriteBlogList = () => {
             const response = await api.get(
                 `${import.meta.env.VITE_SERVER_BASE_URL}/blogs/favourites/`
             );
-            console.log(response?.data, "responsee");
             if (response.status === 200) {
                 dispatch({
                     type: actions.favouriteBlog.DATA_FETCHED,
